@@ -1,0 +1,50 @@
+{
+  "name": "ai_xiaoshuo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/main.js",
+  "scripts": {
+    "postinstall": "cd frontend && npm install && npm run install:ai-server",
+    "install:ai-server": "cd ai-server && ./.venv/bin/python -m pip install -r requirements.txt",
+    "start:ai-server": "cd ai-server && ./.venv/bin/uvicorn main:app --host 127.0.0.1 --port 8000",
+    "dev": "concurrently -k \"npm:dev:frontend\" \"npm:dev:electron\"",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:electron": "npm run build:electron && cross-env NODE_ENV=development electron .",
+    "build:frontend": "cd frontend && npm run build",
+    "build:electron": "tsc",
+    "build:ai-server": "cd ai-server && ./.venv/bin/pyinstaller main.py --name ai-server --onefile --noconsole",
+    "build": "npm run build:frontend && npm run build:electron && npm run build:ai-server",
+    "start": "npm run build && electron .",
+    "dist": "npm run build && electron-builder"
+  },
+  "build": {
+    "appId": "com.example.ai-xiaoshuo",
+    "productName": "AI Xiaoshuo",
+    "files": [
+      "dist/main.js",
+      "dist/preload.js",
+      "frontend/dist"
+    ],
+    "extraResources": [
+      {
+        "from": "ai-server/dist/ai-server",
+        "to": "ai-server"
+      }
+    ]
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^9.2.1",
+    "cross-env": "^7.0.3",
+    "electron": "^38.2.2",
+    "electron-builder": "^26.0.12",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3",
+    "vite": "^6.3.6"
+  },
+  "dependencies": {
+    "electron-store": "^8.2.0"
+  }
+}
